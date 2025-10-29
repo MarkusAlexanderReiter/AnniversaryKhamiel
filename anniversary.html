@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Anniversary ❤️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Floating hearts animation */
+        .heart {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            animation: float 15s infinite;
+            pointer-events: none;
+            filter: opacity(0.5);
+        }
+
+        .heart svg {
+            width: 100%;
+            height: 100%;
+            fill: #ff69b4;
+        }
+
+        @keyframes float {
+            0% {
+                bottom: -50px;
+                opacity: 0;
+                transform: translateX(0) scale(0.5);
+            }
+            5% {
+                opacity: 1;
+            }
+            95% {
+                opacity: 1;
+            }
+            100% {
+                bottom: 110vh;
+                opacity: 0;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        /* Letter container */
+        .letter-container {
+            position: relative;
+            width: 350px;
+            height: 450px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .letter-container:hover {
+            transform: scale(1.05);
+        }
+
+        .letter-container.opened {
+            cursor: default;
+            pointer-events: none;
+        }
+
+        /* Envelope */
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            margin-top: 100px;
+            overflow: visible;
+        }
+
+        /* Envelope back (behind letter) */
+        .envelope-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 10px;
+            z-index: 1;
+        }
+
+        /* Envelope flap (opens up) */
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 175px solid transparent;
+            border-right: 175px solid transparent;
+            border-top: 120px solid #f8e1e8;
+            transform-origin: top center;
+            transition: transform 1s ease;
+            z-index: 3;
+            backface-visibility: visible;
+        }
+
+        .letter-container.opened .envelope-flap {
+            transform: rotateX(-180deg);
+        }
+
+        /* Envelope front pocket (covers letter bottom) */
+        .envelope-front {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 130px;
+            background: #fff;
+            border-radius: 0 0 10px 10px;
+            z-index: 4;
+            transition: opacity 0.5s ease 0.5s;
+        }
+
+        .letter-container.opened .envelope-front {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Letter paper */
+        .letter-paper {
+            position: absolute;
+            top: 140px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: top 1s ease;
+            z-index: 2;
+        }
+
+        .letter-container.opened .letter-paper {
+            top: -300px;
+            z-index: 5;
+        }
+
+        .letter-heart {
+            width: 60px;
+            height: 60px;
+            background-color: #ff69b4;
+            transform: rotate(45deg);
+            margin: 20px auto;
+            position: relative;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        .letter-heart:before,
+        .letter-heart:after {
+            content: "";
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background-color: #ff69b4;
+            border-radius: 50%;
+        }
+
+        .letter-heart:before {
+            top: -30px;
+            left: 0;
+        }
+
+        .letter-heart:after {
+            left: 30px;
+            top: 0;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: rotate(45deg) scale(1);
+            }
+            25% {
+                transform: rotate(45deg) scale(1.1);
+            }
+            50% {
+                transform: rotate(45deg) scale(1);
+            }
+        }
+
+        .envelope-title {
+            text-align: center;
+            color: #d63384;
+            font-size: 20px;
+            font-style: italic;
+            margin-top: 20px;
+        }
+
+        /* Content after opening */
+        .content {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+            animation: fadeIn 1s ease;
+        }
+
+        .content.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .content-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .message {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            animation: slideUp 1s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .message h1 {
+            color: #d63384;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .message p {
+            color: #555;
+            font-size: 1.2em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .signature {
+            text-align: right;
+            font-style: italic;
+            color: #d63384;
+            margin-top: 30px;
+            font-size: 1.3em;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 30px auto;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: slideUp 1.2s ease;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .letter-container {
+                width: 280px;
+                height: 380px;
+            }
+
+            .envelope {
+                height: 200px;
+            }
+
+            .envelope-flap {
+                border-left: 140px solid transparent;
+                border-right: 140px solid transparent;
+                border-top: 100px solid #f8e1e8;
+            }
+
+            .letter-paper {
+                width: 240px;
+                padding: 20px;
+            }
+
+            .letter-container.opened .letter-paper {
+                top: -250px;
+            }
+
+            .message {
+                padding: 25px;
+            }
+
+            .message h1 {
+                font-size: 2em;
+            }
+
+            .message p {
+                font-size: 1em;
+            }
+
+            .envelope-title {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .letter-container {
+                width: 250px;
+                height: 350px;
+            }
+
+            .envelope {
+                height: 180px;
+            }
+
+            .envelope-flap {
+                border-left: 125px solid transparent;
+                border-right: 125px solid transparent;
+                border-top: 90px solid #f8e1e8;
+            }
+
+            .letter-paper {
+                width: 220px;
+                padding: 15px;
+            }
+
+            .content-wrapper {
+                padding: 20px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating hearts -->
+    <div class="heart" style="left: 10%; animation-delay: 0s;">
+        <svg viewBox="0 0 32 29.6">
+            <path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/>
+        </svg>
+    </div>
+    <div class="heart" style="left: 25%; animation-delay: 3s;">
+        <svg viewBox="0 0 32 29.6">
+            <path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/>
+        </svg>
+    </div>
+    <div class="heart" style="left: 40%; animation-delay: 6s;">
+        <svg viewBox="0 0 32 29.6">
+            <path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/>
+        </svg>
+    </div>
+    <div class="heart" style="left: 55%; animation-delay: 2s;">
+        <svg viewBox="0 0 32 29.6">
+            <path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/>
+        </svg>
+    </div>
+    <div class="heart" style="left: 70%; animation-delay: 5s;">
+        <svg viewBox="0 0 32 29.6">
+            <path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/>
+        </svg>
+    </div>
+    <div class="heart" style="left: 85%; animation-delay: 8s;">
+        <svg viewBox="0 0 32 29.6">
+            <path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/>
+        </svg>
+    </div>
+
+    <!-- Letter container -->
+    <div class="letter-container" id="letterContainer">
+        <div class="letter-paper">
+            <div class="letter-heart"></div>
+        </div>
+        <div class="envelope">
+            <div class="envelope-back"></div>
+            <div class="envelope-flap"></div>
+            <div class="envelope-front"></div>
+        </div>
+        <div class="envelope-title">Open on our anniversary ❤️</div>
+    </div>
+
+    <!-- Content after opening -->
+    <div class="content" id="content">
+        <div class="content-wrapper">
+            <div class="message">
+                <h1>Happy Anniversary, My Love ❤️</h1>
+                <p>
+                    Even though miles separate us, my heart has never felt closer to yours. 
+                    Every day with you, even from afar, has been a beautiful chapter in our story. 
+                    Distance may test us, but it only proves how strong our love truly is.
+                </p>
+                <p>
+                    You are my first thought in the morning and my last at night. 
+                    The time zones don't matter, the distance doesn't matter – what matters is 
+                    that every moment I spend thinking of you makes me fall deeper in love.
+                </p>
+                <p>
+                    Thank you for being patient, understanding, and for loving me through all 
+                    the challenges. You make the wait worthwhile, and every reunion sweeter. 
+                    I can't wait for the day when we don't have to say goodbye anymore.
+                </p>
+                <p>
+                    Here's to us, to our love, and to all the beautiful memories we've created 
+                    and will continue to create together. Happy anniversary Pookie!.
+                </p>
+                <div class="signature">Forever yours, Markus ❤️</div>
+            </div>
+
+            <!-- Video Player - Replace VIDEO_ID with your YouTube video ID -->
+            <div class="video-container">
+                <iframe 
+                    src="https://www.youtube.com/embed/VIDEO_ID" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const letterContainer = document.getElementById('letterContainer');
+        const content = document.getElementById('content');
+
+        letterContainer.addEventListener('click', function() {
+            // Add opened class to trigger animation
+            letterContainer.classList.add('opened');
+            
+            // Wait for animation to complete, then show content
+            setTimeout(() => {
+                content.classList.add('show');
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
